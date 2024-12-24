@@ -18,14 +18,35 @@ class Settings:
 
    
     # db
-    DB_USER:str = os.getenv("DB_USER")
-    DB_PASSWORD:str = os.getenv("DB_PASSWORD")
-    DB_HOST:str = os.getenv("DB_HOST")
-    DB_PORT:int  = os.getenv("DB_PORT")
-    DB_NAME:str  = os.getenv("DB_NAME")
+    db_user:str = os.getenv("DB_USER")
+    db_password: str = os.getenv("DB_PASSWORD")
+    db_host: str = os.getenv("DB_HOST")
+    db_port: int = int(os.getenv("DB_PORT"))
+    db_name: str = os.getenv("DB_NAME")
     
     @property
     def database_url(self) -> str:
-        return f"postgresql+asyncpg://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
-
+        return f"postgres://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
+    
+    
 settings = Settings()
+
+
+TORTOISE_ORM = {
+    'connections': {'default': settings.database_url},
+    'apps': {
+        'models': {
+            'models': [
+                'src.app.features.user.domain.model.user_model',
+                'src.app.features.project.domain.model.project_model',
+                'src.app.features.chat.domain.model.chat_model',
+                'src.app.features.message.domain.model.responce_model',
+                'src.app.features.message.domain.model.prompt_model',
+                'src.app.features.share_link.domain.model.link_model',
+                'src.app.core.websocket.websocket_model',
+                'aerich.models' 
+            ],
+            'default_connection': 'default'
+        },
+    },
+}

@@ -1,33 +1,15 @@
-from tortoise import Tortoise, fields
-from tortoise.models import Model
+from tortoise import Tortoise
 from typing import AsyncGenerator
+import asyncio  
+import os
 
-from src.app.core.config.setting import Settings
+from src.app.core.config.setting import TORTOISE_ORM
+from tortoise import Tortoise
 
 class Database:
-    DATABASE_URL = Settings.database_url
     
     def __init__(self):
-        self.db_config = {
-            'connections': {'default': self.DATABASE_URL},
-            'apps': {
-                'models': {
-                    'models': [
-                        'src.app.core.config.model.base_model',
-                        'src.app.features.user.domain.model.user_model',
-                        'src.app.features.project.domain.model.project_model',
-                        'src.app.features.chat.domain.model.chat_model',
-                        'src.app.features.message.domain.model.message_model',
-                        'src.app.features.message.domain.model.responce_model',
-                        'src.app.features.message.domain.model.prompt_model',
-                        'src.app.features.share_link.domain.model.link_model',
-                        'src.app.core.websocket.websocket_model',
-                        'aerich.models' 
-                    ],
-                    'default_connection': 'default'
-                },
-            },
-        }
+        self.db_config = TORTOISE_ORM
         
     async def init_db(self):
         await Tortoise.init(self.db_config)
@@ -37,4 +19,19 @@ class Database:
         async with Tortoise.get_connection("default").acquire() as connection:
             yield connection
 
-db = Database()
+db = Database() 
+async def a():
+    print("DB_USER:", os.getenv("DB_USER"))
+    print("DB_PASSWORD:", os.getenv("DB_PASSWORD"))
+    print("DB_HOST:", os.getenv("DB_HOST"))
+    print("DB_PORT:", os.getenv("DB_PORT"))
+    print("DB_NAME:", os.getenv("DB_NAME"))
+    try:
+        await Tortoise.init(config=TORTOISE_ORM)
+        print("Database connection successful!")
+    except Exception as e:
+        print(f"Failed to connect to the database: {e}")
+        
+
+if __name__ == "__main__":  
+    asyncio.run(a())  

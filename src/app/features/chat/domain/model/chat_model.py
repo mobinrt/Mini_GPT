@@ -16,4 +16,5 @@ class ChatModel(BaseModel):
     
     class Meta:
         table = 'chats'
+        indexes = [("project_id",)]
     

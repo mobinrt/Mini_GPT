@@ -1,5 +1,4 @@
 from fastapi_jwt_auth import AuthJWT
-from tortoise.expressions import Q
 from datetime import timedelta
 from typing import TypeVar, Generic, Type
 import jwt

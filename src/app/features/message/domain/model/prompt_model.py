@@ -6,3 +6,4 @@ class PromptModel(MessageModel):
     
     class Meta:
         table = 'prompts'
+        indexes = [("chat_id",)]

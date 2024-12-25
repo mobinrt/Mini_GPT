@@ -28,3 +28,4 @@ class UserModel(BaseModel):
     
     class Meta:
         table = 'users'
+        indexes = [("email",)]

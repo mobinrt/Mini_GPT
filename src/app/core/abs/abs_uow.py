@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Type, TypeVar
+from typing import Type, TypeVar
 from contextlib import asynccontextmanager
 
-from .abc_repository import BaseRepository
+from .abs_repository import BaseRepository
 
 TRepository = TypeVar('TRepository', bound=BaseRepository)
 

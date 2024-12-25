@@ -13,6 +13,7 @@ class LinkModel(BaseModel):
     
     class Meta:
         table = 'links'
+        indexes = [("user_id", "project_id", "chat_id")]
         
     @property
     def expired_at(self) -> datetime:

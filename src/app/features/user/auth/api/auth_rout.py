@@ -62,6 +62,6 @@ async def read_users_me(token: str, auth_service: AuthServiceImp = Depends(get_a
 
 
 @router.get("/admin/dashboard")
-@role_required(UserRole.ADMIN.value)
+@role_required(UserRole.ADMIN)
 async def admin_dashboard(Authorize: AuthJWT = Depends(), auth_service: AuthServiceImp = Depends(get_auth_service)):
     return {"message": "Welcome to the admin dashboard!"}

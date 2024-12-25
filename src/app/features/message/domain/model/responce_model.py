@@ -9,3 +9,4 @@ class ResponceModel(MessageModel):
     
     class Meta:
         table = 'responces'
+        indexes = [("prompt_id",)]

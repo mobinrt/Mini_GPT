@@ -13,13 +13,13 @@ class IUnitOfWork(AbstractUnitOfWork):
         self.repositories: Dict[str, BaseRepository] = {}
         self.models_to_save: list[BaseModel] = [] 
 
-    async def commit(self):
+    async def _commit(self):
         for model in self.models_to_save:
             await model.save()  
         self.models_to_save.clear()  
 
 
-    async def rollback(self):
+    async def _rollback(self):
         self.models_to_save.clear() 
     
        
@@ -28,9 +28,9 @@ class IUnitOfWork(AbstractUnitOfWork):
         async with in_transaction() as connection:
             try:
                 yield self  
-                await self.commit() 
+                await self._commit 
             except Exception as e:
-                await self.rollback()  
+                await self._rollback()  
                 raise e
 
     def get_repository(self, repository_in: Type[TRepository]) -> TRepository:

@@ -25,10 +25,10 @@ class ICreateUserUseCase(BaseUseCase[CreateUserArgs, UserDisplay]):
         
     async def __call__(self, args: CreateUserArgs) -> UserDisplay: 
         if not args.username:
-            raise BaseError(message='Username should not be blank!')
+            raise BaseError('Username should not be blank!')
         
         if not args.email:
-            raise BaseError(message='Email should not be blank!')
+            raise BaseError('Email should not be blank!')
         
         return await self.execute_method.execute(args, self.uow)
         

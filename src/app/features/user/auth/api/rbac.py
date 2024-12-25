@@ -8,7 +8,7 @@ def role_required(required_role: str):
             Authorize.jwt_required()
             role = Authorize.get_raw_jwt().get('role')
             if role != required_role:
-                raise BaseError(message='Access forbidden')
+                raise BaseError('Access forbidden')
             return await func(*args, **kwargs)
         return wrapper
     return decorator

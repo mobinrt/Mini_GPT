@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 from src.app.features.user.domain.user_schema import UserCreate
 

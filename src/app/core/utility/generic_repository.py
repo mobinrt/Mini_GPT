@@ -26,4 +26,8 @@ class GenericRepository(BaseRepository[TModel]):
         return first_state
 
     async def delete(self, entity: TModel) -> Optional[TModel]:
-        return entity
+        if entity:
+            return entity
+        else:
+            return None
+

@@ -5,7 +5,7 @@ import jwt
 
 from src.app.core.exception.base_exception import BaseError
 from src.app.features.user.domain.model.user_model import UserModel
-from src.app.core.abs.base_auth_services import AbstractAuthServices
+from app.core.abs.abs_auth_services import AbstractAuthServices
 from src.app.core.config.setting import settings
 from src.app.core.enum.user_role import UserRole
 

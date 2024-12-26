@@ -36,6 +36,12 @@ class IUnitOfWork(AbstractUnitOfWork):
                 await self._rollback()  
                 raise e
 
+
+    @asynccontextmanager
+    async def read_only(self):
+        yield self
+
+
     def get_repository(self, repository_in: Type[TRepository]) -> TRepository:
         if repository_in not in self.repositories:
             self.repositories[repository_in] = repository_in(self)

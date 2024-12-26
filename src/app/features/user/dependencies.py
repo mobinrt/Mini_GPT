@@ -8,6 +8,7 @@ from src.app.core.abs.abs_uow import AbstractUnitOfWork
 from src.app.features.user.auth.service.auth_service_imp import AuthServiceImp
 from src.app.core.utility.imp_uow import IUnitOfWork
 from src.app.features.user.usecase.create_user_usecase import CreateUserUseCase, ICreateUserUseCase
+from src.app.features.user.admin.usecase.get_user_usecase import GetUserUseCase, IGetUserUseCase
 
 
 async def get_user_repository() -> BaseRepository:
@@ -25,14 +26,16 @@ async def get_user_unit_of_work() -> AbstractUnitOfWork:
     return IUnitOfWork()
 
 
-async def get_create_user_use_case(
+async def get_create_user_usecase(
     uow: IUnitOfWork = Depends(get_user_unit_of_work),
 ) -> CreateUserUseCase:
     return ICreateUserUseCase(uow)
 
 
-# async def get_user_use_case(uow: IUnitOfWork = Depends(get_user_unit_of_work)) -> GetUserUseCase:
-#     return GetUserUseCaseImp(uow)
+async def get_user_by_id_usecase(
+    uow: IUnitOfWork = Depends(get_user_unit_of_work)
+    ) -> GetUserUseCase:
+     return IGetUserUseCase(uow)
 
 
 # async def get_users_use_case(uow: IUnitOfWork = Depends(get_user_unit_of_work)) -> GetUsersUseCase:

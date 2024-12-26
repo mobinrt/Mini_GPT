@@ -14,10 +14,6 @@ class BaseRepository(ABC, Generic[_T]):
         raise NotImplementedError()
 
     @abstractmethod
-    async def find_by_email(self, email: str) -> Optional[_T]:
-        raise NotImplementedError()
-
-    @abstractmethod
     async def find_by_id(self, id: int) -> Optional[_T]:
         raise NotImplementedError()
 

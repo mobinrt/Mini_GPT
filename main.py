@@ -4,7 +4,7 @@ from tortoise import Tortoise
 import uvicorn
  
 from src.app.core.config.database import TORTOISE_ORM  
-from src.app.features.user.api.user_routers import user_router
+from src.app.features.user.router.user_routers import user_router
 
 
 async def lifespan(app: FastAPI):

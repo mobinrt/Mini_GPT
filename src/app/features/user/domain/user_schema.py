@@ -35,5 +35,14 @@ class UserUpdate(UserCreate):
     password: Optional[str] = None 
     confirm_password: Optional[str] = None 
 
+
+class GetUserByID(BaseModel):
+    id: int
+
+
+class GetUserByEmail(BaseModel):
+    email: EmailStr
+    
+    
 class AddPicture(BaseModel):
     image_url: HttpUrl

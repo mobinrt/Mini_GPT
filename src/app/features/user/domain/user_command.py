@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.app.features.user.domain.user_schema import UserCreate
+from src.app.features.user.domain.user_schema import UserCreate, GetUserByID
 
 @dataclass
 class CreateUserArgs:
@@ -17,8 +17,12 @@ class CreateUserArgs:
         )
 
 @dataclass
-class DisplayUserArgs:
+class GetUserByIDArgs:
     id: int
-    first_name: str
-    last_name: str
-    email: str
+    
+    @classmethod
+    def from_pydantic(cls, get_user: GetUserByID) -> 'GetUserByIDArgs':
+        return cls(
+            id=get_user.id,
+        )
+    

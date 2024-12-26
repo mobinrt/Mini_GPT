@@ -13,8 +13,8 @@ class GenericRepository(BaseRepository[TModel]):
     async def create(self, entity: TModel) -> TModel:
         return entity
 
-    async def find_by_email(self, email: str) -> Optional[TModel]:
-        return await self.model.get_or_none(email=email)
+    async def find_by_id(self, id: int) -> Optional[TModel]:
+        return await self.model.get_or_none(id=id)
 
     async def find_all(self) -> Sequence[TModel]:
         return await self.model.all()

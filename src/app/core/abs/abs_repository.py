@@ -18,6 +18,11 @@ class BaseRepository(ABC, Generic[_T]):
         raise NotImplementedError()
 
     @abstractmethod
+    async def find_by_id(self, id: int) -> Optional[_T]:
+        raise NotImplementedError()
+
+            
+    @abstractmethod
     async def update(self, second_state: _T, first_state: _T) -> _T:
         raise NotImplementedError()
 

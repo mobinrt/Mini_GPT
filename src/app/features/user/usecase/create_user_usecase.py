@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 
 from src.app.features.user.domain.user_command import CreateUserArgs
-from src.app.features.user.repository.user_repo import UserRepository
+from src.app.features.user.service.user_service import UserService 
 from src.app.features.user.domain.user_command import CreateUserArgs
 from src.app.features.user.domain.user_schema import UserDisplay
 from src.app.features.user.domain.model.user_model import UserModel
@@ -36,9 +36,9 @@ class ICreateUserUseCase(BaseUseCase[CreateUserArgs, UserDisplay]):
 class ExecuteCreateUser:
     async def execute(self, args: CreateUserArgs, uow: IUnitOfWork) -> UserDisplay:
         async with uow:
-            user_repo = uow.get_repository(UserRepository)
+            user_service = uow.get_service(UserService)
             
-            existing_user = await user_repo.find_by_email(args.email)
+            existing_user = await user_service.find_by_email(args.email)
             
             if existing_user:
                 raise BaseError(f"This email is already registered.")

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from .get_user_api import router as get_user_api
+from .get_admin_api import router as get_admin_api
 
-user_router = APIRouter()
+admin_router = APIRouter()
 
-user_router.include_router(get_user_api)
+admin_router.include_router(get_admin_api)

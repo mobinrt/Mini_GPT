@@ -9,7 +9,10 @@ from src.app.features.user.dependencies import get_user_by_id_usecase
 
 @router.get('/user/by_id/', 
             response_model=UserDisplay, status_code=status.HTTP_200_OK, 
-            responses={status.HTTP_404_NOT_FOUND},
+            responses={status.HTTP_404_NOT_FOUND: {
+                        "description": "User not found"    
+                    }
+                },
             )
 async def create_user(id: GetUserByID, get_user_use_case: GetUserUseCase = Depends(get_user_by_id_usecase)):
     try:

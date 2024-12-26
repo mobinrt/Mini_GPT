@@ -5,7 +5,7 @@ import uvicorn
  
 from src.app.core.config.database import TORTOISE_ORM  
 from src.app.features.user.router.user_routers import user_router
-
+from src.app.features.user.admin.router.admin_routers import admin_router
 
 async def lifespan(app: FastAPI):
     print("Initializing database...")
@@ -24,7 +24,10 @@ register_tortoise(
     add_exception_handlers=True,
 )
 
+
 app.include_router(user_router)
+app.include_router(admin_router)
+
 
 @app.get('/')
 def start():

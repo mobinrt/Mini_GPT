@@ -9,7 +9,10 @@ from src.app.features.user.dependencies import get_create_user_usecase
 
 @router.post('/create', 
             response_model=UserDisplay, status_code=status.HTTP_201_CREATED, 
-            responses={status.HTTP_400_BAD_REQUEST},
+            responses={status.HTTP_400_BAD_REQUEST: {
+                        "description": "Invalid data"
+                    }
+               },
             )
 async def create_user(user: UserCreate, create_user_use_case: CreateUserUseCase = Depends(get_create_user_usecase)):
     try:

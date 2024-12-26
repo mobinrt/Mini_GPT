@@ -2,7 +2,7 @@ from typing import Type, TypeVar, Sequence, Optional
 from datetime import datetime
 
 from src.app.core.config.model.base_model import BaseModel
-from app.core.abs.abs_repository import BaseRepository
+from src.app.core.abs.abs_repository import BaseRepository
 
 TModel = TypeVar('TModel', bound=BaseModel)
 

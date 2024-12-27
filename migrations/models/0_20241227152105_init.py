@@ -4,7 +4,7 @@ from tortoise import BaseDBAsyncClient
 async def upgrade(db: BaseDBAsyncClient) -> str:
     return """
         CREATE TABLE IF NOT EXISTS "users" (
-    "id" UUID NOT NULL  PRIMARY KEY,
+    "id" SERIAL NOT NULL PRIMARY KEY,
     "created_at" TIMESTAMPTZ   DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ   DEFAULT CURRENT_TIMESTAMP,
     "username" VARCHAR(50) NOT NULL,
@@ -14,13 +14,14 @@ async def upgrade(db: BaseDBAsyncClient) -> str:
     "is_premium" BOOL NOT NULL  DEFAULT False,
     "pic_url" VARCHAR(255)
 );
+CREATE INDEX IF NOT EXISTS "idx_users_email_133a6f" ON "users" ("email");
 CREATE TABLE IF NOT EXISTS "projects" (
     "id" SERIAL NOT NULL PRIMARY KEY,
     "created_at" TIMESTAMPTZ   DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ   DEFAULT CURRENT_TIMESTAMP,
     "name" VARCHAR(50) NOT NULL,
     "description" VARCHAR(100) NOT NULL,
-    "owner_id_id" UUID NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE
+    "owner_id_id" INT NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS "chats" (
     "id" SERIAL NOT NULL PRIMARY KEY,
@@ -31,6 +32,7 @@ CREATE TABLE IF NOT EXISTS "chats" (
     "last_active" TIMESTAMPTZ,
     "project_id_id" INT NOT NULL REFERENCES "projects" ("id") ON DELETE CASCADE
 );
+CREATE INDEX IF NOT EXISTS "idx_chats_project_8aab6a" ON "chats" ("project_id_id");
 CREATE TABLE IF NOT EXISTS "links" (
     "id" SERIAL NOT NULL PRIMARY KEY,
     "created_at" TIMESTAMPTZ   DEFAULT CURRENT_TIMESTAMP,
@@ -39,14 +41,15 @@ CREATE TABLE IF NOT EXISTS "links" (
     "is_public" BOOL NOT NULL  DEFAULT False,
     "chat_id_id" INT REFERENCES "chats" ("id") ON DELETE CASCADE,
     "project_id_id" INT REFERENCES "projects" ("id") ON DELETE CASCADE,
-    "user_id_id" UUID NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE
+    "user_id_id" INT NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE
 );
+CREATE INDEX IF NOT EXISTS "idx_links_user_id_bb3672" ON "links" ("user_id_id", "project_id_id", "chat_id_id");
 CREATE TABLE IF NOT EXISTS "websocket_sessions" (
     "id" SERIAL NOT NULL PRIMARY KEY,
     "connected_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
     "disconnected_at" TIMESTAMPTZ,
     "chat_id" INT NOT NULL REFERENCES "chats" ("id") ON DELETE CASCADE,
-    "user_id" UUID NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE
+    "user_id" INT NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS "prompts" (
     "id" SERIAL NOT NULL PRIMARY KEY,
@@ -56,6 +59,7 @@ CREATE TABLE IF NOT EXISTS "prompts" (
     "status" VARCHAR(1) NOT NULL  DEFAULT 'S',
     "chat_id_id" INT NOT NULL REFERENCES "chats" ("id") ON DELETE CASCADE
 );
+CREATE INDEX IF NOT EXISTS "idx_prompts_chat_id_3f9a37" ON "prompts" ("chat_id_id");
 COMMENT ON COLUMN "prompts"."status" IS 'SENT: S\nDELIVERED: D\nREAD: R\nFAILED: F';
 CREATE TABLE IF NOT EXISTS "responces" (
     "id" SERIAL NOT NULL PRIMARY KEY,
@@ -67,6 +71,7 @@ CREATE TABLE IF NOT EXISTS "responces" (
     "chat_id_id" INT NOT NULL REFERENCES "chats" ("id") ON DELETE CASCADE,
     "prompt_id_id" INT NOT NULL REFERENCES "prompts" ("id") ON DELETE CASCADE
 );
+CREATE INDEX IF NOT EXISTS "idx_responces_prompt__7d3684" ON "responces" ("prompt_id_id");
 COMMENT ON COLUMN "responces"."status" IS 'SENT: S\nDELIVERED: D\nREAD: R\nFAILED: F';
 COMMENT ON COLUMN "responces"."like_status" IS 'LIKE: L\nDISLIKE: D\nNONE: N';
 CREATE TABLE IF NOT EXISTS "aerich" (

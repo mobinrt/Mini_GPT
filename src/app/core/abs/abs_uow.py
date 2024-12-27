@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Type, TypeVar
 from tortoise import Model
+from contextlib import asynccontextmanager
 
 from .abs_repository import BaseRepository
 from .abs_service import BaseService
@@ -28,7 +29,7 @@ class AbstractUnitOfWork(ABC):
     async def __aexit__(self, exc_type, exc_val, exc_tb):  
         raise NotImplementedError()
     
-    
+    @asynccontextmanager
     @abstractmethod
     async def read_only(self):
         raise NotImplementedError()

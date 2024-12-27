@@ -5,7 +5,6 @@ import re
 from src.app.core.config.model.base_model import BaseModel
 
 class UserModel(BaseModel):
-    id = fields.UUIDField(primary_key=True)
     username = fields.CharField(max_length=50)
     email = fields.CharField(   
                             max_length=100, 

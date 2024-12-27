@@ -1,5 +1,4 @@
-from typing import Type, TypeVar, Sequence, Optional
-from datetime import datetime
+from typing import Optional
 from abc import ABC, abstractmethod
 
 from src.app.core.abs.abs_service import BaseService

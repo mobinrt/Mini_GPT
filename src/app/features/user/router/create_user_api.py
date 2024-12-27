@@ -23,10 +23,10 @@ async def create_user(user: UserCreate, create_user_use_case: CreateUserUseCase 
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=e.message
         )
-    # except Exception as _e:
-    #     print(_e)
-    #     raise HTTPException(
-    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
-    #     )
+    except Exception as _e:
+        print(_e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
         
     return new_user

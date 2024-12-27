@@ -1,4 +1,5 @@
 from abc import abstractmethod, ABC
+from typing import Type
 
 from src.app.features.user.domain.user_command import GetUserByIDArgs
 from src.app.features.user.repository.user_repo import UserRepository 
@@ -15,11 +16,16 @@ class GetUserUseCase(BaseUseCase[GetUserByIDArgs, UserDisplay], ABC):
     async def __call__(self, args: GetUserByIDArgs) -> UserDisplay:
         raise NotImplementedError()
     
+    @property
+    @abstractmethod
+    def execute_method(self):
+        raise NotImplementedError()
+
     
 class IGetUserUseCase(BaseUseCase[GetUserByIDArgs, UserDisplay]):
-    def __init__(self, uow: IUnitOfWork, execute_method: 'ExecuteGetUser'):
+    def __init__(self, uow: IUnitOfWork):
         self.uow: IUnitOfWork = uow
-        self.execute_method = execute_method
+        self._execute_method = ExecuteGetUser()
         
     async def __call__(self, args: GetUserByIDArgs) -> UserDisplay: 
         if args.id < 0:
@@ -27,6 +33,9 @@ class IGetUserUseCase(BaseUseCase[GetUserByIDArgs, UserDisplay]):
         
         return await self.execute_method.execute(args, self.uow)
     
+    @property
+    def execute_method(self) -> Type['ExecuteGetUser']:
+        return self._execute_method
     
 class ExecuteGetUser:
     async def execute(self, args: GetUserByIDArgs, uow: IUnitOfWork):

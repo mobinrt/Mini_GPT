@@ -6,6 +6,7 @@ class UserDisplayByAdmin(BaseModel):
     id: int
     username: str
     email: EmailStr
+    is_admin: bool
     is_premium: bool
     image_url: Optional[HttpUrl] = None
     created_at: Optional[datetime] = None 

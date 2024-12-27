@@ -22,8 +22,6 @@ class UserDisplay(BaseModel):
     email: EmailStr
     is_premium: bool
     image_url: Optional[HttpUrl] = None
-    created_at: Optional[datetime] = None 
-    updated_at: Optional[datetime] = None 
         
     model_config = {
         'from_attributes': True

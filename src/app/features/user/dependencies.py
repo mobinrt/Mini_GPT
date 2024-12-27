@@ -1,6 +1,7 @@
 from fastapi import Depends
 
 from src.app.features.user.repository.user_repo import UserRepository
+from src.app.features.user.domain.model.user_model import UserModel
 from src.app.features.user.service.user_service import UserService, IUserService
 from src.app.core.abs.abs_repository import BaseRepository
 from src.app.core.abs.abs_auth_services import AbstractAuthServices
@@ -15,8 +16,8 @@ async def get_user_repository() -> BaseRepository:
     return UserRepository()
 
 
-async def get_user_serivce() -> UserService:
-    return IUserService()
+async def get_user_service(model: UserModel = Depends()) -> UserService:
+    return IUserService(model)
 
 
 async def get_auth_service() -> AbstractAuthServices:
@@ -28,6 +29,7 @@ async def get_user_unit_of_work() -> AbstractUnitOfWork:
 
 async def get_create_user_usecase(
     uow: IUnitOfWork = Depends(get_user_unit_of_work),
+    # user_service: IUserService = Depends(get_user_service)
 ) -> CreateUserUseCase:
     return ICreateUserUseCase(uow)
 

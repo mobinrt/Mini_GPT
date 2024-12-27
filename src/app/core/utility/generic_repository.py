@@ -14,7 +14,11 @@ class GenericRepository(BaseRepository[TModel]):
         return entity
 
     async def find_by_id(self, id: int) -> Optional[TModel]:
-        return await self.model.get_or_none(id=id)
+        entity = await self.model.get_or_none(id=id)
+        if entity:
+            return entity
+        return None
+            
 
     async def find_all(self) -> Sequence[TModel]:
         return await self.model.all()

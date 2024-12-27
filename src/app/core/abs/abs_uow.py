@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from typing import Type, TypeVar
-from contextlib import asynccontextmanager
 from tortoise import Model
 
 from .abs_repository import BaseRepository
@@ -12,22 +11,25 @@ TService = TypeVar('TService', bound=BaseService)
 class AbstractUnitOfWork(ABC):
     
     @abstractmethod
-    async def commit(self):
+    async def _commit(self):
         raise NotImplementedError()
 
 
     @abstractmethod
-    async def rollback(self):
+    async def _rollback(self):
         raise NotImplementedError()
 
     
     @abstractmethod
-    @asynccontextmanager
-    async def __call__(self):
+    async def __aenter__(self):  
         raise NotImplementedError()
-
+                
     @abstractmethod
-    @asynccontextmanager
+    async def __aexit__(self, exc_type, exc_val, exc_tb):  
+        raise NotImplementedError()
+    
+    
+    @abstractmethod
     async def read_only(self):
         raise NotImplementedError()
     

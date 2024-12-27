@@ -16,17 +16,17 @@ from src.app.features.user.dependencies import get_create_user_usecase
             )
 async def create_user(user: UserCreate, create_user_use_case: CreateUserUseCase = Depends(get_create_user_usecase)):
     try:
-        dataclass_instance = CreateUserArgs.from_pydantic(user)
+        dataclass_instance = CreateUserArgs.from_pydantic(user) 
         new_user = await create_user_use_case(dataclass_instance)
     except BaseError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=e.message
         )
-    except Exception as _e:
-        print(_e)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+    # except Exception as _e:
+    #     print(_e)
+    #     raise HTTPException(
+    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+    #     )
         
     return new_user

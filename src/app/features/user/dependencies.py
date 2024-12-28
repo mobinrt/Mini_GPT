@@ -7,6 +7,7 @@ from src.app.core.abs.abs_repository import BaseRepository
 from src.app.core.abs.abs_auth_services import AbstractAuthServices
 from src.app.core.abs.abs_uow import AbstractUnitOfWork
 from src.app.features.user.auth.service.auth_service_imp import AuthServiceImp
+from src.app.features.user.auth.usecase.auth_usecase import AuthUseCase
 from src.app.core.utility.imp_uow import IUnitOfWork
 from src.app.features.user.usecase.create_user_usecase import CreateUserUseCase, ICreateUserUseCase
 from src.app.features.user.admin.usecase.get_user_usecase import GetUserUseCase, IGetUserUseCase
@@ -23,13 +24,18 @@ async def get_user_service(model: UserModel = Depends()) -> UserService:
 async def get_auth_service() -> AbstractAuthServices:
     return AuthServiceImp()
 
+async def get_auth_usecase(
+    auth_service: AuthServiceImp = Depends(get_auth_service)
+    ) -> AuthUseCase:
+    return AuthUseCase(auth_service)
+
+
 async def get_user_unit_of_work() -> AbstractUnitOfWork:
     return IUnitOfWork()
 
 
 async def get_create_user_usecase(
     uow: IUnitOfWork = Depends(get_user_unit_of_work),
-    # user_service: IUserService = Depends(get_user_service)
 ) -> CreateUserUseCase:
     return ICreateUserUseCase(uow)
 

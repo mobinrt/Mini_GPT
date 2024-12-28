@@ -17,19 +17,3 @@ class Database:
 
 
 db = Database() 
-
-# async def a():
-#     print("DB_USER:", os.getenv("DB_USER"))
-#     print("DB_PASSWORD:", os.getenv("DB_PASSWORD"))
-#     print("DB_HOST:", os.getenv("DB_HOST"))
-#     print("DB_PORT:", os.getenv("DB_PORT"))
-#     print("DB_NAME:", os.getenv("DB_NAME"))
-#     try:
-#         await Tortoise.init(config=TORTOISE_ORM)
-#         print("Database connection successful!")
-#     except Exception as e:
-#         print(f"Failed to connect to the database: {e}")
-        
-
-# if __name__ == "__main__":  
-#     asyncio.run(a())  

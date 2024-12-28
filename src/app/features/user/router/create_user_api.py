@@ -24,7 +24,6 @@ async def create_user(user: UserCreate, create_user_use_case: CreateUserUseCase 
             detail=e.message
         )
     except Exception as _e:
-        print(_e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )

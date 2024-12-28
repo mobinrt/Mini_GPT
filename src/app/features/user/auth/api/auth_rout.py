@@ -1,67 +1,78 @@
-from fastapi import APIRouter, status, Depends, HTTPException
-from fastapi_jwt_auth import AuthJWT
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 
-from ..domain.auth_schemas import TokenDisplay, UserDisplay, LoginRequest
-from ..use_case.auth_usecase import AuthUseCase
-from ..service.auth_service_imp import AuthServiceImp
-from ..dependencies import get_auth_service
+from src.app.features.user.auth.usecase.auth_usecase import AuthUseCase
+from src.app.features.user.auth.service.auth_service_imp import AuthServiceImp, oauth2_scheme
+from src.app.features.user.auth.domain.auth_schemas import TokenDisplay, AccessTokenDisplay
+from src.app.features.user.domain.user_schema import UserDisplay
 from src.app.core.exception.auth_exceptions import InvalidCredentialsError
 from src.app.core.exception.base_exception import BaseError
-from .rbac import role_required
 from src.app.core.enum.user_role import UserRole
+from src.app.features.user.auth.service.rbac import role_required
+from src.app.features.user.dependencies import get_auth_service, get_auth_usecase
 
 router = APIRouter(tags=['authentication'])
 
-@router.post('/token', response_model=TokenDisplay, status_code=status.HTTP_200_OK)
-async def login_for_access_token(
-    form_data: LoginRequest, 
-    Authorize: AuthJWT = Depends(), 
-    auth_service: AuthServiceImp = Depends(get_auth_service)
-):
-    auth_usecase = AuthUseCase(auth_service)
-
+@router.post('/token', response_model=TokenDisplay, status_code=status.HTTP_202_ACCEPTED)
+async def login_for_access_token(data: OAuth2PasswordRequestForm = Depends(), auth_usecase: AuthUseCase = Depends(get_auth_usecase)):
     try:
-        return await auth_usecase.get_token(form_data.email, form_data.password, Authorize)
+        return await auth_usecase.get_token(data)
     except InvalidCredentialsError:
+        raise HTTPException(status_code=401, detail='Invalid email or password', headers={'WWW-Authenticate': 'Bearer'})
+    except BaseError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Invalid email or password',
-            headers={'WWW-Authenticate': 'Bearer'},
+            detail=e.message
+        )
+    except Exception as _e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-@router.post('/refresh-token', response_model=TokenDisplay)
-async def refresh_access_token(Authorize: AuthJWT = Depends(), auth_service: AuthServiceImp = Depends(get_auth_service)):
-    auth_usecase = AuthUseCase(auth_service)
-    
+
+
+@router.post('/refresh-token', response_model=AccessTokenDisplay)
+async def refresh_access_token(token: str = Depends(oauth2_scheme), auth_usecase: AuthUseCase = Depends(get_auth_usecase)):
     try:
-        return await auth_usecase.refresh_access_token(Authorize)
+        return await auth_usecase.refresh_access_token(token)
     except BaseError:
+        raise HTTPException(status_code=401, detail='Invalid refresh token', headers={'WWW-Authenticate': 'Bearer'})
+    except Exception as _e:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Invalid refresh token',
-            headers={'WWW-Authenticate': 'Bearer'},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-@router.get('/dev-login-token', response_model=TokenDisplay)
-async def get_dev_token(auth_service: AuthServiceImp = Depends(get_auth_service)):
-    auth_usecase = AuthUseCase(auth_service)
-    return await auth_usecase.get_dev_token(role='admin')
 
 @router.get('/read/users/me', response_model=UserDisplay)
-async def read_users_me(token: str, auth_service: AuthServiceImp = Depends(get_auth_service)):
-    auth_usecase = AuthUseCase(auth_service)
-    
+async def read_users_me(token: str = Depends(oauth2_scheme), auth_usecase: AuthUseCase = Depends(get_auth_usecase)):
     try:
         return await auth_usecase.get_current_user(token)
     except BaseError:
+        raise HTTPException(status_code=401, detail='Invalid token or user not found', headers={'WWW-Authenticate': 'Bearer'})
+    except Exception as _e:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Invalid token or user not found',
-            headers={'WWW-Authenticate': 'Bearer'},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
 @router.get("/admin/dashboard")
-@role_required(UserRole.ADMIN)
-async def admin_dashboard(Authorize: AuthJWT = Depends(), auth_service: AuthServiceImp = Depends(get_auth_service)):
-    return {"message": "Welcome to the admin dashboard!"}
+@role_required(UserRole.ADMIN.value) 
+async def admin_dashboard(token: str = Depends(oauth2_scheme)):
+    try:
+        return {"message": "Welcome to the admin dashboard!"}
+    except BaseError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=e.message
+        )
+    except Exception as _e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@router.get("/dev-login-token")
+async def get_dev_token(auth_service: AuthServiceImp = Depends(get_auth_service)):
+    id = -1 
+    token = await auth_service.create_access_token(user_id=id, role=UserRole.DEV)
+
+    return {"access_token": token, "token_type": "bearer"}
